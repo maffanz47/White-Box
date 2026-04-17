@@ -8,6 +8,8 @@ const navLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: '◫' },
   { href: '/flow', label: 'Money Flow', icon: '◍' },
   { href: '/audit', label: 'Audit Trail', icon: '⬡' },
+  { href: '/donate', label: 'Donate', icon: '💝' },
+  { href: '/admin', label: 'NGO Portal', icon: '🔐' },
 ];
 
 export default function Navbar() {
