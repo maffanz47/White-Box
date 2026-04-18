@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Webhook Simulator (Hackathon Demo Tool)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #1f2937;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 400px;
+            border-top: 4px solid #10b981;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+            color: #111827;
+        }
+        p {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 0.875rem;
+        }
+        button {
+            width: 100%;
+            background-color: #10b981;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+        button:hover {
+            background-color: #059669;
+        }
+        #result {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            display: none;
+            word-break: break-all;
+        }
+        .success { background-color: #d1fae5; border: 1px solid #34d399; color: #065f46; }
+        .error { background-color: #fee2e2; border: 1px solid #f87171; color: #991b1b; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>🏦 External Bank Simulator</h2>
+    <p>Use this during your pitch to simulate Raast/1Link sending a webhook to your Beeceptor API.</p>
+
+    <div class="form-group">
+        <label>Donor Name</label>
+        <input type="text" id="donor_name" value="Hackathon Judge" />
+    </div>
+
+    <div class="form-group">
+        <label>Amount (PKR)</label>
+        <input type="number" id="amount" value="50000" />
+    </div>
+
+    <div class="form-group">
+        <label>Sector</label>
+        <select id="sector">
+            <option value="health">Health</option>
+            <option value="education">Education</option>
+            <option value="disaster_relief">Disaster Relief</option>
+            <option value="infrastructure">Infrastructure</option>
+            <option value="food_security">Food Security</option>
+        </select>
+    </div>
+
+    <button onclick="sendWebhook()">Send Simulated Webhook</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    async function sendWebhook() {
+        const btn = document.querySelector('button');
+        const resultDiv = document.getElementById('result');
+        
+        btn.innerText = "Sending...";
+        btn.disabled = true;
+        resultDiv.style.display = 'none';
+
+        // Your exact Beeceptor URL
+        const webhookUrl = "https://whitebox-test-123456.free.beeceptor.com/api/webhook/donation";
+        
+        // Convert PKR to Paisa for the API
+        const amountInPKR = document.getElementById('amount').value;
+        const amountInPaisa = amountInPKR * 100;
+
+        const payload = {
+            donor_name: document.getElementById('donor_name').value,
+            donor_id: "42201-" + Math.floor(Math.random() * 9000000 + 1000000) + "-8",
+            amount: amountInPaisa,
+            sector: document.getElementById('sector').value,
+            channel: "raast",
+            tx_ref: "DEMO-" + Math.floor(Math.random() * 10000)
+        };
+
+        try {
+            const response = await fetch(webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+            
+            resultDiv.style.display = 'block';
+            if(response.ok) {
+                resultDiv.className = 'success';
+                resultDiv.innerHTML = `<strong>✅ Success! Webhook Sent</strong><br/><br/>The bank webhook was fired to Beeceptor. Check your Vercel Dashboard!`;
+            } else {
+                resultDiv.className = 'error';
+                resultDiv.innerHTML = `<strong>❌ Error</strong><br/>${data.error || 'Failed to send'}`;
+            }
+        } catch(e) {
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'error';
+            resultDiv.innerHTML = `<strong>❌ Network Error</strong><br/>Could not reach Beeceptor.`;
+        }
+
+        btn.innerText = "Send Simulated Webhook";
+        btn.disabled = false;
+    }
+</script>
+
+</body>
+</html>
