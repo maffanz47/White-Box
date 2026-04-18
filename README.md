@@ -156,17 +156,6 @@ Watch the Live Counter tick up in real time.
 
 ---
 
-## Judging Alignment (Micathon '26)
-
-| Criterion | Weight | How WhiteBox addresses it |
-|---|---|---|
-| Relevance to Theme | 25% | "Money Moves" — every rupee tracked in real time |
-| Simplicity & Usability | 20% | One-glance Live Counter, no signup to view |
-| Innovation | 20% | SHA-256 hash chain audit — tamper-evident, not blockchain |
-| Technical Execution | 20% | Full-stack, live-deployed, Supabase Realtime |
-| Presentation | 15% | Live bank simulator demo → instant counter update |
-
----
 
 ## Project Structure
 
