@@ -120,8 +120,8 @@
         btn.disabled = true;
         resultDiv.style.display = 'none';
 
-        // Your exact Beeceptor URL
-        const webhookUrl = "https://whitebox-test-123456.free.beeceptor.com/api/webhook/donation";
+        // Direct to Vercel API (CORS headers added — works from local HTML)
+        const webhookUrl = "https://white-box-iota.vercel.app/api/webhook/donation";
         
         // Convert PKR to Paisa for the API
         const amountInPKR = document.getElementById('amount').value;
