@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navLinks = [
-  { href: '/', label: 'Home' },
   { href: '/dashboard', label: 'Donor Analytics' },
   { href: '/flow', label: 'Money Flow' },
   { href: '/audit', label: 'Audit Trail' },
@@ -16,61 +15,28 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/5 glass-nav">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-foreground">
-            <span className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent-green to-accent-blue flex items-center justify-center text-sm font-bold text-white">
-              W
-            </span>
-            <span>WhiteBox</span>
-            <span className="text-xs text-muted font-normal font-mono ml-1">v1.0</span>
-          </Link>
+    <nav className="glass-nav sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-5 h-12 flex items-center justify-between">
 
-          {/* Nav Links — desktop */}
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const isActive = link.href === '/'
-                ? pathname === '/'
-                : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    isActive
-                      ? 'bg-white/10 text-foreground'
-                      : 'text-muted hover:text-foreground hover:bg-white/5'
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+        {/* Wordmark */}
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <span className="w-6 h-6 rounded-md bg-indigo-500 flex items-center justify-center text-white text-xs font-bold shrink-0">W</span>
+          <span className="text-sm font-semibold text-zinc-100 tracking-tight">WhiteBox</span>
+          <span className="text-xs text-zinc-600 font-mono hidden sm:block">v1.0</span>
+        </Link>
 
-          {/* Live Status Badge */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-green/20 bg-accent-green/5">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
-            <span className="text-xs font-mono text-accent-green">LIVE</span>
-          </div>
-        </div>
-
-        {/* Mobile Nav */}
-        <div className="md:hidden flex overflow-x-auto gap-1 pb-2 -mx-4 px-4">
+        {/* Links — desktop */}
+        <div className="hidden md:flex items-center gap-0.5">
           {navLinks.map((link) => {
-            const isActive = link.href === '/'
-              ? pathname === '/'
-              : pathname.startsWith(link.href);
+            const active = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  isActive
-                    ? 'bg-white/10 text-foreground'
-                    : 'text-muted hover:text-foreground hover:bg-white/5'
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  active
+                    ? 'bg-white/8 text-zinc-100'
+                    : 'text-zinc-500 hover:text-zinc-300 hover:bg-white/5'
                 }`}
               >
                 {link.label}
@@ -78,6 +44,30 @@ export default function Navbar() {
             );
           })}
         </div>
+
+        {/* Live pill */}
+        <div className="flex items-center gap-1.5 text-xs font-mono text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="hidden sm:block">LIVE</span>
+        </div>
+      </div>
+
+      {/* Mobile scroll row */}
+      <div className="md:hidden flex overflow-x-auto gap-0.5 pb-2 px-4">
+        {navLinks.map((link) => {
+          const active = link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex-shrink-0 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                active ? 'bg-white/8 text-zinc-100' : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              {link.label}
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );

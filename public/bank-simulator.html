@@ -4,268 +4,413 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhiteBox — Bank Transfer Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #0f0f11;
+            --surface:  #18181b;
+            --s2:       #1c1c1f;
+            --border:   #2a2a30;
+            --border2:  #323238;
+            --fg:       #f4f4f5;
+            --fg2:      #a1a1aa;
+            --fg3:      #52525b;
+            --accent:   #6366f1;
+            --green:    #22c55e;
+            --red:      #ef4444;
+            --amber:    #f59e0b;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #0d1117;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
             min-height: 100vh;
-            padding: 1rem;
-            color: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            font-size: 13px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
-        .card {
-            background: #161b22;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-top: 3px solid #10b981;
-            padding: 1.75rem;
-            border-radius: 14px;
+
+        /* ── Shell ── */
+        .shell {
             width: 100%;
-            max-width: 480px;
+            max-width: 540px;
         }
-        .header { margin-bottom: 1.25rem; }
-        .header h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #f9fafb; }
-        .header p { font-size: 0.8rem; color: #6b7280; }
-        .tag {
-            display: inline-block;
-            font-size: 0.65rem;
-            font-family: monospace;
-            padding: 0.2rem 0.6rem;
-            border-radius: 99px;
-            background: rgba(16,185,129,0.1);
-            color: #10b981;
-            border: 1px solid rgba(16,185,129,0.2);
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .wordmark {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--fg);
+            text-decoration: none;
+        }
+        .wordmark-icon {
+            width: 24px; height: 24px;
+            border-radius: 6px;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: #fff;
+        }
+        .live-pill {
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; color: var(--green);
+            padding: 3px 8px;
+            border: 1px solid rgba(34,197,94,0.2);
+            border-radius: 4px;
+        }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+        /* ── Card ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
             margin-bottom: 0.75rem;
-            letter-spacing: 0.05em;
         }
-        .form-group { margin-bottom: 0.875rem; }
-        label { display: block; font-size: 0.72rem; font-weight: 600; margin-bottom: 0.35rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; }
+        .card-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--fg3);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* ── Form ── */
+        .field { margin-bottom: 0.875rem; }
+        .field:last-child { margin-bottom: 0; }
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--fg2);
+            margin-bottom: 5px;
+            letter-spacing: 0.01em;
+        }
         input, select {
             width: 100%;
-            padding: 0.6rem 0.75rem;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            font-size: 0.875rem;
-            color: #f9fafb;
-            transition: border-color 0.2s;
+            padding: 8px 10px;
+            background: var(--s2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--fg);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 13px;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            appearance: none;
+            -webkit-appearance: none;
         }
-        input:focus, select:focus { outline: none; border-color: #10b981; }
-        select option { background: #1f2937; color: #f9fafb; }
-        .amount-wrap { position: relative; }
-        .amount-wrap .prefix { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; font-size: 0.875rem; }
-        .amount-wrap input { padding-left: 2.25rem; }
-        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-        button {
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+        }
+        select { cursor: pointer; }
+        select option { background: #1c1c1f; }
+
+        .amount-field { position: relative; }
+        .amount-prefix {
+            position: absolute;
+            left: 10px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--fg3);
+            font-size: 12px;
+            pointer-events: none;
+        }
+        .amount-field input { padding-left: 30px; }
+
+        .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* ── Button ── */
+        .btn-send {
             width: 100%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 0.75rem;
+            background: var(--accent);
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.875rem;
+            border-radius: 7px;
+            padding: 10px 16px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
-            transition: opacity 0.2s;
-            margin-top: 1rem;
-            letter-spacing: 0.025em;
+            transition: opacity 0.15s;
+            letter-spacing: 0.01em;
         }
-        button:hover { opacity: 0.9; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        #result {
-            margin-top: 1rem;
-            padding: 0.875rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            display: none;
+        .btn-send:hover { opacity: 0.88; }
+        .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-send.loading { opacity: 0.6; }
+
+        /* ── Result ── */
+        #result { display: none; margin-top: 0.75rem; }
+        .result-inner {
+            padding: 12px 14px;
+            border-radius: 7px;
+            font-size: 12px;
+            line-height: 1.7;
         }
-        .success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
-        .error   { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.25);  color: #fca5a5; }
-        #result strong { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; }
-        #result .hash { font-family: monospace; font-size: 0.7rem; word-break: break-all; color: #10b981; margin-top: 0.5rem; }
-        .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 1.25rem 0; }
-        .loading-ngo { color: #6b7280; font-size: 0.8rem; padding: 0.6rem 0.75rem; }
-        a.live-link { display: block; text-align: center; margin-top: 1rem; font-size: 0.75rem; color: #6b7280; text-decoration: none; }
-        a.live-link:hover { color: #10b981; }
+        .result-inner.success {
+            background: rgba(34,197,94,0.06);
+            border: 1px solid rgba(34,197,94,0.2);
+            color: #86efac;
+        }
+        .result-inner.error {
+            background: rgba(239,68,68,0.06);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: #fca5a5;
+        }
+        .result-title {
+            font-weight: 600;
+            font-size: 12.5px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .result-row {
+            display: flex; align-items: baseline; gap: 6px;
+            color: rgba(255,255,255,0.45);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+        .result-row span { color: rgba(255,255,255,0.75); }
+        .hash-row {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            color: rgba(99,102,241,0.9);
+            word-break: break-all;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* ── Footer links ── */
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+        }
+        .footer-links a {
+            font-size: 11px;
+            color: var(--fg3);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .footer-links a:hover { color: var(--fg2); }
+
+        /* ── Info strip ── */
+        .info-strip {
+            background: rgba(99,102,241,0.06);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 7px;
+            padding: 10px 12px;
+            font-size: 11px;
+            color: var(--fg3);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+        .info-strip strong { color: rgba(99,102,241,0.9); font-weight: 500; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div class="tag">RAAST / 1LINK BANK SIMULATOR</div>
+<div class="shell">
+
+    <!-- Header -->
     <div class="header">
-        <h2>WhiteBox — Bank Transfer Simulator</h2>
-        <p>Simulates a bank webhook sending a donation directly to the WhiteBox platform.</p>
+        <a href="https://white-box-iota.vercel.app" target="_blank" class="wordmark">
+            <div class="wordmark-icon">W</div>
+            WhiteBox
+        </a>
+        <div class="live-pill">
+            <div class="dot"></div>
+            LIVE
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Donor Name</label>
-        <input type="text" id="donor_name" value="Hackathon Judge" />
+    <!-- Info strip -->
+    <div class="info-strip">
+        Simulates a <strong>Raast / 1Link</strong> bank webhook. The transfer routes through
+        <strong>Beeceptor</strong> to the WhiteBox API, gets recorded, and hashed into the audit chain.
     </div>
 
-    <div class="grid2">
-        <div class="form-group">
-            <label>Amount (PKR)</label>
-            <div class="amount-wrap">
-                <span class="prefix">Rs</span>
-                <input type="number" id="amount" value="50000" min="1" />
+    <!-- Transfer Form -->
+    <div class="card">
+        <div class="card-label">Transfer Details</div>
+
+        <div class="field">
+            <label>Donor Name</label>
+            <input type="text" id="donor_name" value="Hackathon Judge" autocomplete="off" />
+        </div>
+
+        <div class="grid2">
+            <div class="field">
+                <label>Amount (PKR)</label>
+                <div class="amount-field">
+                    <span class="amount-prefix">Rs</span>
+                    <input type="number" id="amount" value="50000" min="1" />
+                </div>
+            </div>
+            <div class="field">
+                <label>Channel</label>
+                <select id="channel">
+                    <option value="raast">Raast P2M</option>
+                    <option value="1link">1Link</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="manual">Manual</option>
+                </select>
             </div>
         </div>
-        <div class="form-group">
-            <label>Channel</label>
-            <select id="channel">
-                <option value="raast">Raast P2M</option>
-                <option value="1link">1Link</option>
-                <option value="bank_transfer">Bank Transfer</option>
-                <option value="manual">Manual</option>
+
+        <div class="field">
+            <label>Destination NGO</label>
+            <select id="ngo_id">
+                <option value="">Loading NGOs...</option>
             </select>
+        </div>
+
+        <div class="field">
+            <label>Sector</label>
+            <select id="sector">
+                <option value="health">Health</option>
+                <option value="education">Education</option>
+                <option value="disaster_relief">Disaster Relief</option>
+                <option value="infrastructure">Infrastructure</option>
+                <option value="food_security">Food Security</option>
+            </select>
+        </div>
+
+        <button class="btn-send" id="sendBtn" onclick="sendWebhook()">
+            Send Transfer
+        </button>
+
+        <div id="result">
+            <div class="result-inner" id="resultInner"></div>
         </div>
     </div>
 
-    <div class="form-group">
-        <label>Destination NGO</label>
-        <select id="ngo_id">
-            <option value="">Loading NGOs...</option>
-        </select>
+    <!-- Footer links -->
+    <div class="footer-links">
+        <a href="https://white-box-iota.vercel.app/dashboard" target="_blank">Donor Dashboard</a>
+        <a href="https://white-box-iota.vercel.app/audit" target="_blank">Audit Chain</a>
+        <a href="https://white-box-iota.vercel.app/flow" target="_blank">Money Flow</a>
     </div>
-
-    <div class="form-group">
-        <label>Sector</label>
-        <select id="sector">
-            <option value="health">Health</option>
-            <option value="education">Education</option>
-            <option value="disaster_relief">Disaster Relief</option>
-            <option value="infrastructure">Infrastructure</option>
-            <option value="food_security">Food Security</option>
-        </select>
-    </div>
-
-    <button id="sendBtn" onclick="sendWebhook()">Send Transfer Webhook</button>
-
-    <div id="result"></div>
-
-    <hr class="divider">
-    <a href="https://white-box-iota.vercel.app/dashboard" target="_blank" class="live-link">View Live Dashboard &rarr;</a>
-    <a href="https://white-box-iota.vercel.app/audit" target="_blank" class="live-link">View Audit Chain &rarr;</a>
 </div>
 
 <script>
-    const BASE_URL = "https://white-box-iota.vercel.app";
-
-    // Beeceptor proxy URL — routes to Vercel just like a real bank would
+    const BASE_URL      = "https://white-box-iota.vercel.app";
     const BEECEPTOR_URL = "https://whitebox-test-123456.free.beeceptor.com";
 
-    // Load NGOs from the live platform
     async function loadNGOs() {
         try {
             const res = await fetch(`${BASE_URL}/api/ngos`);
-            if (!res.ok) throw new Error("Could not load NGOs");
+            if (!res.ok) throw new Error();
             const ngos = await res.json();
             const sel = document.getElementById('ngo_id');
-            sel.innerHTML = '';
-
-            // Add unassigned option
-            const unassigned = document.createElement('option');
-            unassigned.value = '';
-            unassigned.textContent = '— General Pool (no specific NGO) —';
-            sel.appendChild(unassigned);
-
+            sel.innerHTML = '<option value="">— General Pool —</option>';
             ngos.forEach(ngo => {
                 const opt = document.createElement('option');
                 opt.value = ngo.id;
-                opt.textContent = `${ngo.name} (${ngo.sector.replace('_', ' ')})`;
-                // Auto-select matching sector when sector changes
+                opt.textContent = ngo.name;
                 opt.dataset.sector = ngo.sector;
                 sel.appendChild(opt);
             });
-        } catch (e) {
-            document.getElementById('ngo_id').innerHTML = '<option value="">Failed to load — check connection</option>';
+        } catch {
+            document.getElementById('ngo_id').innerHTML = '<option value="">Could not load NGOs</option>';
         }
     }
 
-    // When NGO is selected, auto-set the sector dropdown
     document.addEventListener('DOMContentLoaded', () => {
         loadNGOs();
-        document.getElementById('ngo_id').addEventListener('change', function() {
-            const selectedOpt = this.options[this.selectedIndex];
-            const sector = selectedOpt.dataset.sector;
-            if (sector) {
-                document.getElementById('sector').value = sector;
-            }
+        document.getElementById('ngo_id').addEventListener('change', function () {
+            const s = this.options[this.selectedIndex].dataset.sector;
+            if (s) document.getElementById('sector').value = s;
         });
     });
 
     async function sendWebhook() {
-        const btn = document.getElementById('sendBtn');
-        const resultDiv = document.getElementById('result');
-        
-        btn.textContent = "Sending...";
-        btn.disabled = true;
-        resultDiv.style.display = 'none';
+        const btn    = document.getElementById('sendBtn');
+        const result = document.getElementById('result');
+        const inner  = document.getElementById('resultInner');
 
-        const amountPKR = Number(document.getElementById('amount').value);
+        btn.textContent = 'Sending...';
+        btn.disabled    = true;
+        result.style.display = 'none';
+
+        const amountPKR   = Number(document.getElementById('amount').value);
         const amountPaisa = Math.round(amountPKR * 100);
-        const ngoId = document.getElementById('ngo_id').value;
+        const ngoEl       = document.getElementById('ngo_id');
+        const ngoId       = ngoEl.value;
+        const ngoName     = ngoEl.options[ngoEl.selectedIndex].textContent;
 
         const payload = {
             donor_name: document.getElementById('donor_name').value || 'Anonymous',
-            donor_id: "42201-" + Math.floor(Math.random() * 9000000 + 1000000) + "-8",
-            amount: amountPaisa,
-            sector: document.getElementById('sector').value,
-            channel: document.getElementById('channel').value,
-            tx_ref: "SIM-" + Date.now(),
+            donor_id:   '42201-' + Math.floor(Math.random() * 9000000 + 1000000) + '-8',
+            amount:     amountPaisa,
+            sector:     document.getElementById('sector').value,
+            channel:    document.getElementById('channel').value,
+            tx_ref:     'SIM-' + Date.now(),
         };
-
-        // Only include ngo_id if one was selected
         if (ngoId) payload.ngo_id = ngoId;
 
+        let response, routedVia = 'Beeceptor';
         try {
-            // Route through Beeceptor (intermediary proxy) — mirrors real bank webhook architecture
-            let response;
-            let routedVia = 'Beeceptor Proxy';
-            try {
-                response = await fetch(`${BEECEPTOR_URL}/api/webhook/donation`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            } catch (proxyErr) {
-                // Fallback to direct Vercel API if Beeceptor is unavailable
-                routedVia = 'Direct API (Beeceptor unavailable)';
-                response = await fetch(`${BASE_URL}/api/webhook/donation`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-            }
-
-            const data = await response.json();
-            resultDiv.style.display = 'block';
-
-            if (response.ok) {
-                resultDiv.className = 'success';
-                resultDiv.innerHTML = `
-                    <strong>Transfer Successful — Donation Recorded</strong>
-                    Rs ${amountPKR.toLocaleString()} sent to ${document.getElementById('ngo_id').options[document.getElementById('ngo_id').selectedIndex].textContent}.<br>
-                    Sector: <b>${payload.sector}</b> &nbsp;|&nbsp; Channel: <b>${payload.channel}</b><br>
-                    Routed via: <b style="color:#10b981">${routedVia}</b><br>
-                    Donation ID: <span style="font-family:monospace;font-size:0.7rem">${data.donation_id || 'N/A'}</span>
-                    <div class="hash">SHA-256: ${data.audit_hash || 'N/A'}</div>
-                `;
-            } else {
-                resultDiv.className = 'error';
-                resultDiv.innerHTML = `<strong>Transfer Failed</strong>${data.error || 'Unknown error'}<br><small>${data.detail || ''}</small>`;
-            }
-        } catch(e) {
-            resultDiv.style.display = 'block';
-            resultDiv.className = 'error';
-            resultDiv.innerHTML = `<strong>Network Error</strong>Could not reach the WhiteBox API. Check your internet connection.`;
+            response = await fetch(`${BEECEPTOR_URL}/api/webhook/donation`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+        } catch {
+            routedVia = 'Direct API';
+            response = await fetch(`${BASE_URL}/api/webhook/donation`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
         }
 
-        btn.textContent = "Send Transfer Webhook";
-        btn.disabled = false;
+        let data = {};
+        try { data = await response.json(); } catch {}
+
+        result.style.display = 'block';
+        if (response.ok) {
+            inner.className = 'result-inner success';
+            inner.innerHTML = `
+                <span class="result-title">Transfer recorded successfully</span>
+                <div class="result-row">Recipient <span>${ngoName}</span></div>
+                <div class="result-row">Amount <span>Rs ${amountPKR.toLocaleString()}</span></div>
+                <div class="result-row">Channel <span>${payload.channel}</span></div>
+                <div class="result-row">Routed via <span>${routedVia}</span></div>
+                <div class="result-row">Donation ID <span style="font-family:'JetBrains Mono',monospace;font-size:10px">${data.donation_id || 'N/A'}</span></div>
+                ${data.audit_hash ? `<div class="hash-row">SHA-256 &nbsp;${data.audit_hash}</div>` : ''}
+            `;
+        } else {
+            inner.className = 'result-inner error';
+            inner.innerHTML = `<span class="result-title">Transfer failed</span>${data.error || 'Unknown error'}`;
+        }
+
+        btn.textContent = 'Send Transfer';
+        btn.disabled    = false;
     }
 </script>
 
