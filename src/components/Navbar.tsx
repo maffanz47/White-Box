@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const navLinks = [
-  { href: '/', label: 'Home', icon: '◈' },
-  { href: '/dashboard', label: 'Donor Analytics', icon: '💙' },
-  { href: '/flow', label: 'Money Flow', icon: '◍' },
-  { href: '/audit', label: 'Audit Trail', icon: '⬡' },
-  { href: '/admin', label: 'NGO Portal', icon: '🔐' },
+  { href: '/', label: 'Home' },
+  { href: '/dashboard', label: 'Donor Analytics' },
+  { href: '/flow', label: 'Money Flow' },
+  { href: '/audit', label: 'Audit Trail' },
+  { href: '/admin', label: 'NGO Portal' },
 ];
 
 export default function Navbar() {
@@ -27,7 +27,7 @@ export default function Navbar() {
             <span className="text-xs text-muted font-normal font-mono ml-1">v1.0</span>
           </Link>
 
-          {/* Nav Links */}
+          {/* Nav Links — desktop */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => {
               const isActive = link.href === '/'
@@ -37,17 +37,13 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     isActive
                       ? 'bg-white/10 text-foreground'
                       : 'text-muted hover:text-foreground hover:bg-white/5'
                   }`}
                 >
-                  <span>{link.icon}</span>
                   {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent-green to-accent-blue rounded-full" />
-                  )}
                 </Link>
               );
             })}
@@ -61,7 +57,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Nav */}
-        <div className="md:hidden flex overflow-x-auto gap-1 pb-2 -mx-4 px-4 scrollbar-hide">
+        <div className="md:hidden flex overflow-x-auto gap-1 pb-2 -mx-4 px-4">
           {navLinks.map((link) => {
             const isActive = link.href === '/'
               ? pathname === '/'
@@ -70,13 +66,12 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex-shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   isActive
                     ? 'bg-white/10 text-foreground'
                     : 'text-muted hover:text-foreground hover:bg-white/5'
                 }`}
               >
-                <span>{link.icon}</span>
                 {link.label}
               </Link>
             );
