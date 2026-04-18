@@ -34,11 +34,11 @@ export function truncateHash(hash: string, chars: number = 6): string {
  * Sector display names
  */
 export const SECTOR_LABELS: Record<string, string> = {
-  health: '🏥 Health',
-  education: '📚 Education',
-  disaster_relief: '🆘 Disaster Relief',
-  infrastructure: '🏗️ Infrastructure',
-  food_security: '🍚 Food Security',
+  health: 'Health',
+  education: 'Education',
+  disaster_relief: 'Disaster Relief',
+  infrastructure: 'Infrastructure',
+  food_security: 'Food Security',
 };
 
 /**

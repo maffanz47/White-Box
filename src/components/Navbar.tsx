@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/flow', label: 'Money Flow' },
   { href: '/audit', label: 'Audit Trail' },
   { href: '/admin', label: 'NGO Portal' },
+  { href: '/how-it-works', label: 'How It Works' },
 ];
 
 export default function Navbar() {

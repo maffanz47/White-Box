@@ -154,6 +154,9 @@
 <script>
     const BASE_URL = "https://white-box-iota.vercel.app";
 
+    // Beeceptor proxy URL — routes to Vercel just like a real bank would
+    const BEECEPTOR_URL = "https://whitebox-test-123456.free.beeceptor.com";
+
     // Load NGOs from the live platform
     async function loadNGOs() {
         try {
@@ -219,11 +222,24 @@
         if (ngoId) payload.ngo_id = ngoId;
 
         try {
-            const response = await fetch(`${BASE_URL}/api/webhook/donation`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+            // Route through Beeceptor (intermediary proxy) — mirrors real bank webhook architecture
+            let response;
+            let routedVia = 'Beeceptor Proxy';
+            try {
+                response = await fetch(`${BEECEPTOR_URL}/api/webhook/donation`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (proxyErr) {
+                // Fallback to direct Vercel API if Beeceptor is unavailable
+                routedVia = 'Direct API (Beeceptor unavailable)';
+                response = await fetch(`${BASE_URL}/api/webhook/donation`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            }
 
             const data = await response.json();
             resultDiv.style.display = 'block';
@@ -234,6 +250,7 @@
                     <strong>Transfer Successful — Donation Recorded</strong>
                     Rs ${amountPKR.toLocaleString()} sent to ${document.getElementById('ngo_id').options[document.getElementById('ngo_id').selectedIndex].textContent}.<br>
                     Sector: <b>${payload.sector}</b> &nbsp;|&nbsp; Channel: <b>${payload.channel}</b><br>
+                    Routed via: <b style="color:#10b981">${routedVia}</b><br>
                     Donation ID: <span style="font-family:monospace;font-size:0.7rem">${data.donation_id || 'N/A'}</span>
                     <div class="hash">SHA-256: ${data.audit_hash || 'N/A'}</div>
                 `;
